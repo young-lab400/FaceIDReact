@@ -1,7 +1,8 @@
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useEffect,useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink,useNavigate,useParams  } from 'react-router-dom';
+
 // material
 import {
   Card,
@@ -158,6 +159,7 @@ export default function User() {
 
   const isUserNotFound = filteredUsers.length === 0;
 
+ 
   return (
     <Page title="User">
       <Container>
@@ -165,7 +167,7 @@ export default function User() {
           <Typography variant="h4" gutterBottom>
             User
           </Typography>
-          <Button variant="contained" component={RouterLink} to="#" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" component={RouterLink} to="../UserEdit"  startIcon={<Iconify icon="eva:plus-fill" />}>
             New User
           </Button>
         </Stack>
