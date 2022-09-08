@@ -107,8 +107,35 @@ export default function Register() {
     navigate('/dashboard', { replace: true });
   };
 
-  const fileInputField = useRef(null);
-  const [files, setFiles] = useState({});
+  const [selectedFile, setSelectedFile] = useState();
+	const [isFilePicked, setIsFilePicked] = useState(false);
+
+	const changeHandler = (event) => {
+		setSelectedFile(event.target.files[0]);
+		setIsFilePicked(true);
+	};
+
+	const handleSubmission = () => {
+		const formData = new FormData();
+
+		formData.append('File', selectedFile);
+
+		fetch(
+			'https://freeimage.host/api/1/upload?key=<YOUR_API_KEY>',
+			{
+				method: 'POST',
+				body: formData,
+			}
+		)
+			.then((response) => response.json())
+			.then((result) => {
+				console.log('Success:', result);
+			})
+			.catch((error) => {
+				console.error('Error:', error);
+			});
+	};
+	
 
 
   return (
@@ -132,15 +159,8 @@ export default function Register() {
         <Label>            
           第一張照片
         </Label>
-        <input type="file" ref={fileInputField} />
-        <Label>            
-          第二張照片
-        </Label>
-        <input type="file" ref={fileInputField} />
-        <Label>            
-          第三張照片
-        </Label>
-        <input type="file" ref={fileInputField} />
+        <input type="file"  name="file" onChange={changeHandler} />
+        
         
         <RHFTextField name="email" label="Email address" />
 
@@ -158,8 +178,7 @@ export default function Register() {
             ),
           }}
         />
-
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting} onClick={handleSubmission}>
           Register
         </LoadingButton>
       </Stack>
