@@ -71,7 +71,8 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 
 export default function Register() {
-  const smUp = useResponsive('up', 'sm');
+
+    const smUp = useResponsive('up', 'sm');
 
   const mdUp = useResponsive('up', 'md');
 
@@ -115,25 +116,43 @@ export default function Register() {
 		setIsFilePicked(true);
 	};
 
+  
+
 	const handleSubmission = () => {
 		const formData = new FormData();
 
 		formData.append('File', selectedFile);
+      let baseURL = "";
+      // Make new FileReader
+      const reader = new FileReader();
 
-		fetch(
-			'https://freeimage.host/api/1/upload?key=<YOUR_API_KEY>',
-			{
-				method: 'POST',
-				body: formData,
-			}
-		)
-			.then((response) => response.json())
-			.then((result) => {
-				console.log('Success:', result);
-			})
-			.catch((error) => {
-				console.error('Error:', error);
-			});
+      // Convert the file to base64 text
+      reader.readAsDataURL(selectedFile);
+
+      // on reader load somthing...
+      reader.onload = () => {
+        // Make a fileInfo Object
+        console.log("Called", reader);
+        baseURL = reader.result;
+        console.log(baseURL);
+        
+      };
+
+
+		// fetch(
+		// 	'https://freeimage.host/api/1/upload?key=<YOUR_API_KEY>',
+		// 	{
+		// 	method: 'POST',
+		// body: formData,
+		// }
+		// )
+		// 	.then((response) => response.json())
+		// 	.then((result) => {
+		// 		console.log('Success:', result);
+		// 	})
+		// 	.catch((error) => {
+		// 		console.error('Error:', error);
+		// 	});
 	};
 	
 
