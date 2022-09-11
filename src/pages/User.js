@@ -82,7 +82,7 @@ export default function User() {
   const [lists, setLists] = useState([])
   try{
   useEffect(() => {
-    fetch(`http://localhost:3000/webapi/api/member`)
+    fetch(`/webapi/api/member`)
     .then(res => res.json())
     .then(json => setLists(json))
   }, [])
