@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState,createContext } from 'react';
 import { Outlet } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
@@ -7,6 +7,13 @@ import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
 
 // ----------------------------------------------------------------------
+// 機器選擇暫存
+import MacContext from './createContext';
+
+ const Id =  "245DFC6BDEF6"
+// const MacContext = createContext(Id);
+
+
 
 const APP_BAR_MOBILE = 64;
 const APP_BAR_DESKTOP = 92;
@@ -34,14 +41,15 @@ const MainStyle = styled('div')(({ theme }) => ({
 
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
-
   return (
     <RootStyle>
-      <DashboardNavbar onOpenSidebar={() => setOpen(true)} />
+      <MacContext.Provider value={Id} >
+      <DashboardNavbar onOpenSidebar={() => setOpen(true)}/>
       <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
       <MainStyle>
         <Outlet />
       </MainStyle>
+      </MacContext.Provider>
     </RootStyle>
   );
 }

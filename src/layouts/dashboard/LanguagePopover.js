@@ -1,42 +1,54 @@
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 // material
 import { alpha } from '@mui/material/styles';
 import { Box, MenuItem, Stack, IconButton } from '@mui/material';
 // components
 import MenuPopover from '../../components/MenuPopover';
 
+ import MacContext from './createContext';
 // ----------------------------------------------------------------------
 
 const LANGS = [
   {
-    value: 'en',
-    label: 'English',
-    icon: '/static/icons/ic_flag_en.svg',
+    value: '192.168.3.10',
+    label: '前門',
   },
   {
-    value: 'de',
-    label: 'German',
-    icon: '/static/icons/ic_flag_de.svg',
-  },
-  {
-    value: 'fr',
-    label: 'French',
-    icon: '/static/icons/ic_flag_fr.svg',
-  },
+    value: '192.168.3.11',
+    label: '後門',
+  }
 ];
 
 // ----------------------------------------------------------------------
 
 export default function LanguagePopover() {
+ 
+  const Id = useContext(MacContext);
+  console.log("MacContext1");
+  console.log(Id);
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
-
+  const [MacTemp, setMacTemp] = useState("前門");
   const handleOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const LANGSClick = (arg) => {
+    
+    // console.log("arg");
+    // console.log(arg);
+    setMacTemp(arg);
+    setOpen(false); 
+    <MacContext.Consumer>
+    {MacContext.Id = arg}
+   </MacContext.Consumer>
+    console.log("MacContext2");
+    console.log(MacContext.Id);
+    
   };
 
   return (
@@ -53,7 +65,7 @@ export default function LanguagePopover() {
           }),
         }}
       >
-        <img src={LANGS[0].icon} alt={LANGS[0].label} />
+        <img src="/static/icons/server.jpg" alt={LANGS[0].label} />
       </IconButton>
 
       <MenuPopover
@@ -69,8 +81,8 @@ export default function LanguagePopover() {
       >
         <Stack spacing={0.75}>
           {LANGS.map((option) => (
-            <MenuItem key={option.value} selected={option.value === LANGS[0].value} onClick={() => handleClose()}>
-              <Box component="img" alt={option.label} src={option.icon} sx={{ width: 28, mr: 2 }} />
+            <MenuItem key={option.value} selected={option.value === LANGS[0].value} onClick={() => LANGSClick(option.value)}>
+              <Box component="img" alt={option.label} src="/static/icons/server2.jpg"  sx={{ width: 28, mr: 2 }} />
 
               {option.label}
             </MenuItem>
