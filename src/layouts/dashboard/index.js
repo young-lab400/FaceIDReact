@@ -10,8 +10,9 @@ import DashboardSidebar from './DashboardSidebar';
 // 機器選擇暫存
 import MacContext from './createContext';
 
- const Id =  "245DFC6BDEF6"
-// const MacContext = createContext(Id);
+ // const Id =  "245DFC6BDEF6"
+
+ // const MacContext = createContext(Id);
 
 
 
@@ -41,9 +42,10 @@ const MainStyle = styled('div')(({ theme }) => ({
 
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
+  const [Device,updateId] = useState({Serial:"245DFC6BDEF6",Name:"前門"});
   return (
     <RootStyle>
-      <MacContext.Provider value={Id} >
+      <MacContext.Provider value={{data:Device,updateF:updateId}} >
       <DashboardNavbar onOpenSidebar={() => setOpen(true)}/>
       <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
       <MainStyle>

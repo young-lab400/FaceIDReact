@@ -8,12 +8,14 @@ import MenuPopover from '../../components/MenuPopover';
  import MacContext from './createContext';
 // ----------------------------------------------------------------------
 
-const LANGS = [
+const Device = [
   {
+    Serial:'245DFC6BDEF6',
     value: '192.168.3.10',
     label: '前門',
   },
   {
+    Serial:'245DFC6BDEF6',
     value: '192.168.3.11',
     label: '後門',
   }
@@ -23,12 +25,10 @@ const LANGS = [
 
 export default function LanguagePopover() {
  
-  const Id = useContext(MacContext);
-  console.log("MacContext1");
-  console.log(Id);
+  const ParentContext = useContext(MacContext);
+ 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
-  const [MacTemp, setMacTemp] = useState("前門");
   const handleOpen = () => {
     setOpen(true);
   };
@@ -37,18 +37,21 @@ export default function LanguagePopover() {
     setOpen(false);
   };
 
-  const LANGSClick = (arg) => {
-    
-    // console.log("arg");
-    // console.log(arg);
-    setMacTemp(arg);
+  const DeviceClick = (N,S) => {
     setOpen(false); 
-    <MacContext.Consumer>
-    {MacContext.Id = arg}
-   </MacContext.Consumer>
-    console.log("MacContext2");
-    console.log(MacContext.Id);
-    
+    // 對機器測試連線
+    const url = `/webapi/API/Device/Call?No=${S}`;
+    fetch(url,{
+      method: "POST",
+  })
+  
+  .then(response => response.json())
+  .then(json => console.log(json))
+  .catch((error) => {
+      console.log(`Error: ${error}`);
+  })
+    ParentContext.updateF({Serial:S,Name:N});
+   
   };
 
   return (
@@ -65,7 +68,7 @@ export default function LanguagePopover() {
           }),
         }}
       >
-        <img src="/static/icons/server.jpg" alt={LANGS[0].label} />
+        <img src="/static/icons/server.jpg" alt={Device[0].label} />
       </IconButton>
 
       <MenuPopover
@@ -80,13 +83,14 @@ export default function LanguagePopover() {
         }}
       >
         <Stack spacing={0.75}>
-          {LANGS.map((option) => (
-            <MenuItem key={option.value} selected={option.value === LANGS[0].value} onClick={() => LANGSClick(option.value)}>
+          {Device.map((option) => (
+            <MenuItem key={option.value} selected={option.value === Device[0].value} onClick={() => DeviceClick(option.label,option.Serial)}>
               <Box component="img" alt={option.label} src="/static/icons/server2.jpg"  sx={{ width: 28, mr: 2 }} />
 
               {option.label}
             </MenuItem>
           ))}
+          
         </Stack>
       </MenuPopover>
     </>

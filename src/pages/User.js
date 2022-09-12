@@ -1,6 +1,6 @@
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useEffect,useState } from 'react';
+import { useEffect,useState,useContext } from 'react';
 import { Link as RouterLink,useNavigate,useParams  } from 'react-router-dom';
 
 // material
@@ -27,6 +27,8 @@ import Iconify from '../components/Iconify';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../sections/@dashboard/user';
 import UserEdit from './UserEdit';
+import MacContext from '../layouts/dashboard/createContext';
+
 
 // mock
 // import USERLIST from '../_mock/user';
@@ -79,6 +81,8 @@ function applySortFilter(array, comparator, query) {
 
 export default function User() {
 
+  const ParentContext = useContext(MacContext);
+  console.log(ParentContext.data.Serial);
   const [lists, setLists] = useState([])
   try{
   useEffect(() => {
@@ -86,7 +90,7 @@ export default function User() {
     .then(res => res.json())
     .then(json => setLists(json))
   }, [])
-  console.log(lists);
+  // console.log(lists);
   }
   catch (err) {
     console.error(err);

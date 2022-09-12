@@ -5,7 +5,7 @@ import { Card, Link, Container, Typography ,Stack, IconButton, InputAdornment} f
 // @mui
 import { LoadingButton } from '@mui/lab';
 import * as Yup from 'yup';
-import { useState,useRef  } from 'react';
+import { useState,useRef,useContext  } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Label from '../components/Label';
@@ -21,7 +21,8 @@ import Logo from '../components/Logo';
 // form
 // components
 import Iconify from '../components/Iconify';
-import { FormProvider, RHFTextField } from '../components/hook-form';
+import { FormProvider, RHFTextField,RHFCheckbox } from '../components/hook-form';
+import MacContext from '../layouts/dashboard/createContext';
 
 // ----------------------------------------------------------------------
 
@@ -71,8 +72,8 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 
 export default function Register() {
-
-    const smUp = useResponsive('up', 'sm');
+  const ParentContext = useContext(MacContext);
+  const smUp = useResponsive('up', 'sm');
 
   const mdUp = useResponsive('up', 'md');
 
@@ -116,43 +117,41 @@ export default function Register() {
 		setIsFilePicked(true);
 	};
 
-  
+  const [name, setName] = useState("");
+  const nameChange = (event) => {
+    setName(event.target.value);
+  };
+  const [no, setno] = useState("");
+  const noChange = (event) => {
+    setno(event.target.value);
+  };
 
 	const handleSubmission = () => {
-		const formData = new FormData();
+    // 新建人員
+    
+    const S = ParentContext.data.Serial;
+    const url = `/webapi/api/member/Cr?No=${S}`;
+    fetch(url,{
+      method: "POST",
+      body:JSON.stringify({No: no, Name: name}),
+      headers: {
+       'Content-Type': 'application/json',
+      }
+  })
+  .then(async (data) => {
+    if(data.ok)
+    {
+      
+      console.log("會員新增成功");
+    }
+  } )
+  .catch((error) => {
+      console.log(`Error: ${error}`);
+  })
+  // 照片  Tobase64
 
-		formData.append('File', selectedFile);
-      let baseURL = "";
-      // Make new FileReader
-      const reader = new FileReader();
+  
 
-      // Convert the file to base64 text
-      reader.readAsDataURL(selectedFile);
-
-      // on reader load somthing...
-      reader.onload = () => {
-        // Make a fileInfo Object
-        console.log("Called", reader);
-        baseURL = reader.result;
-        console.log(baseURL);
-        
-      };
-
-
-		// fetch(
-		// 	'https://freeimage.host/api/1/upload?key=<YOUR_API_KEY>',
-		// 	{
-		// 	method: 'POST',
-		// body: formData,
-		// }
-		// )
-		// 	.then((response) => response.json())
-		// 	.then((result) => {
-		// 		console.log('Success:', result);
-		// 	})
-		// 	.catch((error) => {
-		// 		console.error('Error:', error);
-		// 	});
 	};
 	
 
@@ -172,31 +171,16 @@ export default function Register() {
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-          <RHFTextField name="No" label="工號" />
-          <RHFTextField name="Name" label="姓名" />
+          <RHFTextField name="No" label="工號" onChange={noChange}/>
+          <RHFTextField name="Name" label="姓名" onChange={nameChange}/>
         </Stack>
         <Label>            
           第一張照片
         </Label>
         <input type="file"  name="file" onChange={changeHandler} />
+        <RHFCheckbox name="Device1" label="前門" />
+        <RHFCheckbox name="Device2" label="後門" />
         
-        
-        <RHFTextField name="email" label="Email address" />
-
-        <RHFTextField
-          name="password"
-          label="Password"
-          type={showPassword ? 'text' : 'password'}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton edge="end" onClick={() => setShowPassword(!showPassword)}>
-                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
         <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting} onClick={handleSubmission}>
           Register
         </LoadingButton>
