@@ -109,6 +109,10 @@ export default function Register() {
     navigate('/dashboard', { replace: true });
   };
 
+  
+
+  
+
   const [selectedFile, setSelectedFile] = useState();
 	const [isFilePicked, setIsFilePicked] = useState(false);
 
@@ -125,10 +129,30 @@ export default function Register() {
   const noChange = (event) => {
     setno(event.target.value);
   };
+  const [checked1, setChecked] = useState(false);
+  const [checked2, setChecked2] = useState(false);
+
+ // const [Device1, setDevice1] = useState("");
+  const Device1Change = (event) => {
+
+    if (event.target.value === false)
+      setChecked(true);
+    else
+      setChecked(false);
+  };
+
+  // const [Device2, setDevice2] = useState("");
+  const Device2Change = (event) => {
+ 
+    if (event.target.value === false)
+    setChecked2(true);
+  else
+    setChecked2(false);
+  };
+
 
 	const handleSubmission = () => {
     // 新建人員
-    
     const S = ParentContext.data.Serial;
     const url = `/webapi/api/member/Cr?No=${S}`;
     fetch(url,{
@@ -141,7 +165,6 @@ export default function Register() {
   .then(async (data) => {
     if(data.ok)
     {
-      
       console.log("會員新增成功");
     }
   } )
@@ -149,6 +172,45 @@ export default function Register() {
       console.log(`Error: ${error}`);
   })
   // 照片  Tobase64
+  // const formData = new FormData();
+  // formData.append('File', selectedFile);
+
+  let baseURL = "";
+    // Make new FileReader
+    const reader = new FileReader();
+
+    // Convert the file to base64 text
+    reader.readAsDataURL(selectedFile);
+
+    // on reader load somthing...
+    reader.onload = () => {
+      // Make a fileInfo Object
+      console.log("Called", reader);
+      baseURL = reader.result;
+      console.log(baseURL);
+      
+    };
+
+// 照片上傳
+const url2 = `/webapi/API/member/PicUp?DeviceNo=${S}`;
+fetch(url2,{
+  method: "POST",
+  body:JSON.stringify({No: no, PicNo:1,strbase64: baseURL}),
+  headers: {
+    'Content-Type': 'application/json',
+   }
+})
+.then(async (data) => {
+  if(data.ok)
+  {
+    console.log("照片上傳成功");
+  }
+} )
+.catch((error) => {
+    console.log(`Error: ${error}`);
+})
+
+
 
   
 
@@ -178,11 +240,11 @@ export default function Register() {
           第一張照片
         </Label>
         <input type="file"  name="file" onChange={changeHandler} />
-        <RHFCheckbox name="Device1" label="前門" />
-        <RHFCheckbox name="Device2" label="後門" />
+        <RHFCheckbox name="Device1" label="前門" checked={checked1} value="123" onChange={Device1Change}/>
+        <RHFCheckbox name="Device2" label="後門" checked={checked2} value="132" onChange={Device2Change}/>
         
         <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting} onClick={handleSubmission}>
-          Register
+          註冊
         </LoadingButton>
       </Stack>
     </FormProvider>
