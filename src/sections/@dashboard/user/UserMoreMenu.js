@@ -1,16 +1,30 @@
 import { useRef, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink,useSearchParams,createSearchParams } from 'react-router-dom';
+
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
 // component
+// import UserContext from '../../../pages/UserContext';
+
 import Iconify from '../../../components/Iconify';
+
 
 // ----------------------------------------------------------------------
 
-export default function UserMoreMenu() {
+export default function UserMoreMenu(para) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  //  const favoriteFruit = searchParams.get("no");
+   // console.log(favoriteFruit);
+   // const favoriteFruit2 = searchParams.get("name");
+   // console.log(favoriteFruit2);
+  const haddleclick = () => {
+     setSearchParams(
+     createSearchParams({ no: para.data.no,name:para.data.name })
+     );
+  };
   return (
     <>
       <IconButton ref={ref} onClick={() => setIsOpen(true)}>
@@ -27,14 +41,14 @@ export default function UserMoreMenu() {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }}>
+        <MenuItem sx={{ color: 'text.secondary' }} >
           <ListItemIcon>
             <Iconify icon="eva:trash-2-outline" width={24} height={24} />
           </ListItemIcon>
           <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
-        <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
+        <MenuItem component={RouterLink}  to="/dashboard/UserEdit" onClick={haddleclick} sx={{ color: 'text.secondary' }} >
           <ListItemIcon>
             <Iconify icon="eva:edit-fill" width={24} height={24} />
           </ListItemIcon>

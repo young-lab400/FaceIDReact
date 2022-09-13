@@ -26,9 +26,10 @@ import Scrollbar from '../components/Scrollbar';
 import Iconify from '../components/Iconify';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../sections/@dashboard/user';
-import UserEdit from './UserEdit';
+// import UserEdit from './UserEdit';
 import MacContext from '../layouts/dashboard/createContext';
-
+// 人員選擇暫存
+import UserContext from './UserContext';
 
 // mock
 // import USERLIST from '../_mock/user';
@@ -163,6 +164,7 @@ export default function User() {
 
   const isUserNotFound = filteredUsers.length === 0;
 
+  const [User,updateId] = useState({No:"SP3060",Name:"廖健智"});
  
   return (
     <Page title="User">
@@ -200,6 +202,7 @@ export default function User() {
                     const isItemSelected = selected.indexOf(name) !== -1;
 
                     return (
+                      
                       <TableRow
                         hover
                         key={id}
@@ -217,9 +220,12 @@ export default function User() {
                         <TableCell align="left">{name}</TableCell>
                         
                         <TableCell align="right">
-                          <UserMoreMenu />
+                      
+                          <UserMoreMenu data={row}/>
+                        
                         </TableCell>
                       </TableRow>
+                      
                     );
                   })}
                   {emptyRows > 0 && (
@@ -253,6 +259,7 @@ export default function User() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
+        
       </Container>
     </Page>
   );
