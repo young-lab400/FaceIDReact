@@ -73,11 +73,11 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 
 export default function Register() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const favoriteFruit = searchParams.get("no");
-  const favoriteFruit2 = searchParams.get("name");
-  console.log(favoriteFruit);
-  console.log(favoriteFruit2);
+  const paras = useParams();
+  console.log(paras);
+  console.log(paras.no);
+  console.log(paras.name);
+  
   const ParentContext = useContext(MacContext);
   const smUp = useResponsive('up', 'sm');
 

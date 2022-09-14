@@ -22,7 +22,7 @@ export default function Router() {
       children: [
         { path: 'app', element: <DashboardApp /> },
         { path: 'user', element: <User /> },
-        { path: 'UserEdit', element: <UserEdit /> },
+        { path: 'UserEdit', element: <UserEdit />,children:[{path:':paras',element:<></>}] },
         { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> },
       ],

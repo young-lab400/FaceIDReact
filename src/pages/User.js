@@ -37,9 +37,9 @@ import UserContext from './UserContext';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'Id', alignRight: false },
-  { id: 'no', label: 'No', alignRight: false },
-  { id: 'name', label: 'Name', alignRight: false },
+  { id: 'id', label: '序號', alignRight: false },
+  { id: 'no', label: '工號', alignRight: false },
+  { id: 'name', label: '姓名', alignRight: false },
   // { id: 'isVerified', label: 'Verified', alignRight: false },
   // { id: 'status', label: 'Status', alignRight: false },
   { id: '' },
@@ -171,10 +171,10 @@ export default function User() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            使用者
           </Typography>
           <Button variant="contained" component={RouterLink} to="../UserEdit"  startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
+            建立新使用者
           </Button>
         </Stack>
 
