@@ -1,15 +1,17 @@
-import { useNavigate, useParams, } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Card, Box, Stack } from '@mui/material';
+import { Card, Link, Container, Typography, Stack, IconButton, InputAdornment } from '@mui/material';
 // @mui
 import { LoadingButton } from '@mui/lab';
 import * as Yup from 'yup';
-import { useState, useContext, useEffect } from 'react';
+import { useState, useRef, useContext, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import Label from '../components/Label';
+
+// hooks
+import useResponsive from '../hooks/useResponsive';
 // components
 import Page from '../components/Page';
 import Logo from '../components/Logo';
@@ -18,11 +20,11 @@ import Logo from '../components/Logo';
 // import AuthSocial from '../sections/auth/AuthSocial';
 // form
 // components
+import Iconify from '../components/Iconify';
 import { FormProvider, RHFTextField, RHFCheckbox } from '../components/hook-form';
 import MacContext from '../layouts/dashboard/createContext';
 
 // ----------------------------------------------------------------------
-
 
 
 const RootStyle = styled('div')(({ theme }) => ({
@@ -71,45 +73,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 
 export default function Register() {
-  const [Mesageopen, setMOpen] = useState({
-    open: false,
-    vertical: 'top',
-    horizontal: 'center',
-  });
-  const [MesageText, setMsg] = useState('修改成功');
-  const { vertical, horizontal, open } = Mesageopen;
-
   const navigate = useNavigate();
-  const { paras } = useParams();
-  let no = '';
-  let name = '';
-
-  // console.log(paras);
-  if (paras !== undefined) {
-    const st = paras.split('&');
-    no = st[0].split('=')[1];
-    name = st[1].split('=')[1];
-  }
-  const [lists, setLists] = useState([])
-  try {
-    const url = '/webapi/api/member/getNo';
-    useEffect(() => {
-      fetch(url, {
-        method: "POST",
-        body: JSON.stringify({ No: no, Name: "" }),
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      })
-        .then(res => res.json())
-        .then(json => setLists(json))
-    }, [])
-
-  }
-  catch (err) {
-    console.error(err);
-  }
-
   const ParentContext = useContext(MacContext);
 
   const RegisterSchema = Yup.object().shape({
@@ -118,8 +82,8 @@ export default function Register() {
   });
 
   const defaultValues = {
-    No: no,
-    Name: name,
+    No: '',
+    Name: '',
     Device1: false,
     Device2: false
   };
@@ -142,21 +106,15 @@ export default function Register() {
     // setIsFilePicked(true);
   };
 
-  const handleClose = () => {
-     setMOpen({open: false,vertical: 'bottom',
-     horizontal: 'right'});
-  };
- 
-
   const onSubmit = async (data) => {
     console.log(data.No);
     console.log(data.Name);
     console.log(data.Device1);
     console.log(data.Device2);
 
-    // 修改人員
+    // 新建人員
     const S = ParentContext.data.Serial;
-    const url = `/webapi/api/member/Up?No=${S}`;
+    const url = `/webapi/api/member/Cr?No=${S}`;
     fetch(url, {
       method: "POST",
       body: JSON.stringify({ No: data.No, Name: data.Name }),
@@ -166,15 +124,11 @@ export default function Register() {
     })
       .then((data) => {
         if (data.ok) {
-          console.log("會員修改成功");
-          setMsg("會員修改成功");
-          // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
+          console.log("會員新增成功");
         }
       })
       .catch((error) => {
         console.log(`Error: ${error}`);
-        setMsg("會員修改失敗");
-        // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
       })
     // 照片  Tobase64
     // const formData = new FormData();
@@ -206,21 +160,15 @@ export default function Register() {
           .then((data) => {
             if (data.ok) {
               console.log("照片上傳成功");
-              setMsg("照片上傳成功");
-              // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
             }
           })
           .catch((error) => {
             console.log(`Error: ${error}`);
-            setMsg("照片上傳失敗");
-            // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
           })
 
       }
-      
     }
-    setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
-    // navigate('/dashboard/User', { replace: true });
+    // navigate('/dashboard/user', { replace: true });
   };
 
 
@@ -240,23 +188,12 @@ export default function Register() {
             <RHFCheckbox name="Device1" label="前門" />
             <RHFCheckbox name="Device2" label="後門" />
             <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting} >
-              修改
+              註冊
             </LoadingButton>
-            <Stack spacing={0.75}>
-              <Box component="img" alt="照片" src={`data:image/jpeg;base64,${lists.pic1}`} sx={{ width: 280, mr: 2 }} />
-            </Stack>
+
           </Stack>
         </FormProvider>
 
-        
-      <Snackbar
-        anchorOrigin={{ vertical, horizontal }}
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        message={MesageText}
-        key={vertical + horizontal}
-      />
 
       </RootStyle>
     </Page>

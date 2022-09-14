@@ -173,7 +173,7 @@ export default function User() {
           <Typography variant="h4" gutterBottom>
             使用者
           </Typography>
-          <Button variant="contained" component={RouterLink} to="../UserEdit"  startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" component={RouterLink} to="../UserRegister"  startIcon={<Iconify icon="eva:plus-fill" />}>
             建立新使用者
           </Button>
         </Stack>
