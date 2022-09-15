@@ -1,7 +1,7 @@
 import { useNavigate, useParams, } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Card, Box, Stack } from '@mui/material';
+import { Card, Box, Stack, Checkbox } from '@mui/material';
 // @mui
 import { LoadingButton } from '@mui/lab';
 import * as Yup from 'yup';
@@ -73,7 +73,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 
 export default function Register() {
-  
+
   const [Mesageopen, setMOpen] = useState({
     open: false,
     vertical: 'top',
@@ -81,19 +81,27 @@ export default function Register() {
   });
   const [MesageText, setMsg] = useState('修改成功');
   const { vertical, horizontal, open } = Mesageopen;
+  // const [checked, setChecked] = useState(true);
+  // const handleChange = () => {
+    // setChecked(current => !current);
+  // };
+
 
   const navigate = useNavigate();
   const { paras } = useParams();
   let no = '';
   let name = '';
-  
+  let active = false;
+
 
   // console.log(paras);
   if (paras !== undefined) {
     const st = paras.split('&');
     no = st[0].split('=')[1];
     name = st[1].split('=')[1];
+    active = st[2].split('=')[1]==="true";
   }
+  // console.log(active);
   const [lists, setLists] = useState([])
   try {
     const url = '/webapi/api/member/getNo';
@@ -107,11 +115,12 @@ export default function Register() {
       })
         .then(res => res.json())
         .then(json => setLists(json))
-
+         // console.log(lists.active);     
+         // console.log(lists.Active);     
     }, [])
-   
-     // console.log(lists);
-       //  console.log(active);
+    
+    // console.log(lists);
+    //  console.log(active);
   }
   catch (err) {
     console.error(err);
@@ -127,12 +136,12 @@ export default function Register() {
   const defaultValues = {
     No: no,
     Name: name,
-    Active: true,
+    Active: active,
     Device1: false,
     Device2: false
   };
-  console.log(lists.active);
-  console.log(defaultValues);
+  // console.log(lists);
+  // console.log(defaultValues);
 
   // defaultValues.Active = {lists.active>0 ? true:false};
 
@@ -155,21 +164,23 @@ export default function Register() {
   };
 
   const handleClose = () => {
-     setMOpen({open: false,vertical: 'bottom',
-     horizontal: 'right'});
+    setMOpen({
+      open: false, vertical: 'bottom',
+      horizontal: 'right'
+    });
   };
- 
+
 
   const onSubmit = async (data) => {
-    
-    
+
+
 
     // 修改人員
     const S = ParentContext.data.Serial;
     const url = `/webapi/api/member/Up?No=${S}`;
     fetch(url, {
       method: "POST",
-      body: JSON.stringify({ No: data.No, Name: data.Name }),
+      body: JSON.stringify({ No: data.No,Name: data.Name, Active:data.Active }),
       headers: {
         'Content-Type': 'application/json',
       }
@@ -227,13 +238,21 @@ export default function Register() {
           })
 
       }
-      
+
     }
-    setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
+    setMOpen({ open: true, vertical: 'bottom', horizontal: 'right' });
     // navigate('/dashboard/User', { replace: true });
   };
 
-
+  // const isItemSelected = lists.active;
+  // <input
+  //             type="checkbox"
+  //             defaultChecked={false}
+  //             value={lists.active}
+  //             onChange={handleChange}
+  //             id="subscribe"
+  //             name="subscribe"
+  //           />
   return (
     <Page title="UserEdit">
       <RootStyle>
@@ -243,11 +262,11 @@ export default function Register() {
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={3}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <RHFTextField name="No" label="工號" disabled="true"/>
+              <RHFTextField name="No" label="工號" disabled="true" />
               <RHFTextField name="Name" label="姓名" />
             </Stack>
             <input type="file" name="file" onChange={changeHandler} />
-            <RHFCheckbox name="Active" label="啟用" />
+            <RHFCheckbox name="Active" label="啟用" checked={active}/>          
             <RHFCheckbox name="Device1" label="前門" />
             <RHFCheckbox name="Device2" label="後門" />
             <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting} >
@@ -259,15 +278,15 @@ export default function Register() {
           </Stack>
         </FormProvider>
 
-        
-      <Snackbar
-        anchorOrigin={{ vertical, horizontal }}
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        message={MesageText}
-        key={vertical + horizontal}
-      />
+
+        <Snackbar
+          anchorOrigin={{ vertical, horizontal }}
+          open={open}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={MesageText}
+          key={vertical + horizontal}
+        />
 
       </RootStyle>
     </Page>

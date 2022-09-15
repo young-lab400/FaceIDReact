@@ -75,7 +75,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => ((_user.no.toLowerCase().indexOf(query.toLowerCase()) !== -1)||(_user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1))  );
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -164,7 +164,7 @@ export default function User() {
 
   const isUserNotFound = filteredUsers.length === 0;
 
-  const [User,updateId] = useState({No:"SP3060",Name:"廖健智"});
+  const [User,updateId] = useState({No:"SP3060",Name:"廖健智",Active:true});
  
   return (
     <Page title="User">
@@ -197,7 +197,7 @@ export default function User() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     // const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                    const { id, no, name } = row;
+                    const { id, no, name,active } = row;
                     
                     const isItemSelected = selected.indexOf(name) !== -1;
 
