@@ -83,7 +83,7 @@ function applySortFilter(array, comparator, query) {
 export default function User() {
 
   const ParentContext = useContext(MacContext);
-  console.log(ParentContext.data.Serial);
+  // console.log(ParentContext.data.Serial);
   const [lists, setLists] = useState([])
   try{
   useEffect(() => {

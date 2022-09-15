@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import { useState, useRef, useContext, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import Snackbar from '@mui/material/Snackbar';
 import Label from '../components/Label';
 
 // hooks
@@ -73,6 +74,14 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 
 export default function Register() {
+  const [Mesageopen, setMOpen] = useState({
+    open: false,
+    vertical: 'top',
+    horizontal: 'center',
+  });
+  const [MesageText, setMsg] = useState('新增成功');
+  const { vertical, horizontal, open } = Mesageopen;
+
   const navigate = useNavigate();
   const ParentContext = useContext(MacContext);
 
@@ -105,7 +114,10 @@ export default function Register() {
     setSelectedFile(event.target.files[0]);
     // setIsFilePicked(true);
   };
-
+  const handleClose = () => {
+    setMOpen({open: false,vertical: 'bottom',
+    horizontal: 'right'});
+ };
   const onSubmit = async (data) => {
     console.log(data.No);
     console.log(data.Name);
@@ -168,6 +180,7 @@ export default function Register() {
 
       }
     }
+    setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
     // navigate('/dashboard/user', { replace: true });
   };
 
@@ -193,7 +206,15 @@ export default function Register() {
 
           </Stack>
         </FormProvider>
-
+  
+        <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message={MesageText}
+        key={vertical + horizontal}
+      />
 
       </RootStyle>
     </Page>

@@ -21,6 +21,8 @@ import Logo from '../components/Logo';
 import { FormProvider, RHFTextField, RHFCheckbox } from '../components/hook-form';
 import MacContext from '../layouts/dashboard/createContext';
 
+
+
 // ----------------------------------------------------------------------
 
 
@@ -71,6 +73,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 
 export default function Register() {
+  
   const [Mesageopen, setMOpen] = useState({
     open: false,
     vertical: 'top',
@@ -83,6 +86,7 @@ export default function Register() {
   const { paras } = useParams();
   let no = '';
   let name = '';
+  
 
   // console.log(paras);
   if (paras !== undefined) {
@@ -103,8 +107,11 @@ export default function Register() {
       })
         .then(res => res.json())
         .then(json => setLists(json))
-    }, [])
 
+    }, [])
+   
+     // console.log(lists);
+       //  console.log(active);
   }
   catch (err) {
     console.error(err);
@@ -120,9 +127,14 @@ export default function Register() {
   const defaultValues = {
     No: no,
     Name: name,
+    Active: true,
     Device1: false,
     Device2: false
   };
+  console.log(lists.active);
+  console.log(defaultValues);
+
+  // defaultValues.Active = {lists.active>0 ? true:false};
 
   const methods = useForm({
     resolver: yupResolver(RegisterSchema),
@@ -149,10 +161,8 @@ export default function Register() {
  
 
   const onSubmit = async (data) => {
-    console.log(data.No);
-    console.log(data.Name);
-    console.log(data.Device1);
-    console.log(data.Device2);
+    
+    
 
     // 修改人員
     const S = ParentContext.data.Serial;
@@ -190,9 +200,9 @@ export default function Register() {
       // on reader load somthing...
       reader.onload = () => {
         // Make a fileInfo Object
-        console.log("Called", reader);
+        // console.log("Called", reader);
         baseURL = reader.result.split(',')[1];
-        console.log(baseURL);
+        // console.log(baseURL);
         // 上傳照片
         // const S = ParentContext.data.Serial;
         const url2 = `/webapi/api/member/PicUp?DeviceNo=${S}`;
@@ -233,10 +243,11 @@ export default function Register() {
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={3}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <RHFTextField name="No" label="工號" />
+              <RHFTextField name="No" label="工號" disabled="true"/>
               <RHFTextField name="Name" label="姓名" />
             </Stack>
             <input type="file" name="file" onChange={changeHandler} />
+            <RHFCheckbox name="Active" label="啟用" />
             <RHFCheckbox name="Device1" label="前門" />
             <RHFCheckbox name="Device2" label="後門" />
             <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting} >
