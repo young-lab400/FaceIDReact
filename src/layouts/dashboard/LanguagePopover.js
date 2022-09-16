@@ -11,12 +11,12 @@ import MenuPopover from '../../components/MenuPopover';
 const Device = [
   {
     Serial:'245DFC6BDEF6',
-    value: '192.168.3.10',
+    value: '192.168.51.158',
     label: '前門',
   },
   {
     Serial:'245DFC6BDEF6',
-    value: '192.168.3.11',
+    value: '192.168.51.159',
     label: '後門',
   }
 ];
