@@ -26,7 +26,8 @@ const Device = [
 export default function LanguagePopover() {
  
   const ParentContext = useContext(MacContext);
- 
+  const [strsrc, setstrsrc] = useState('/static/icons/imagesRed.jpg');
+  
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
@@ -36,7 +37,7 @@ export default function LanguagePopover() {
   const handleClose = () => {
     setOpen(false);
   };
-
+  const [lists, setLists] = useState([])
   const DeviceClick = (N,S) => {
     setOpen(false); 
     // 對機器測試連線
@@ -46,16 +47,21 @@ export default function LanguagePopover() {
   })
   
   .then(response => response.json())
-  .then(json => console.log(json))
+  .then(json => setLists(json))
   .catch((error) => {
       console.log(`Error: ${error}`);
   })
+  if (lists.data !== undefined)
+    setstrsrc('/static/icons/imagesGreen.jpg');
+  else
+    setstrsrc('/static/icons/imagesRed.jpg');
     ParentContext.updateF({Serial:S,Name:N});
    
   };
 
   return (
     <>
+    <Box component="img" alt="Yeah" src={strsrc}  sx={{ width: 28, mr: 0 }} />
       <IconButton
         ref={anchorRef}
         onClick={handleOpen}
