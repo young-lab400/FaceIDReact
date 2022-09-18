@@ -12,9 +12,15 @@ const navConfig = [
     icon: getIcon('eva:pie-chart-2-fill'),
   },
   {
-    title: 'user',
+    title: '使用者',
     path: '/dashboard/user',
     icon: getIcon('eva:people-fill'),
+  },
+  {
+    title :'刷卡紀錄',
+    path:'/dashboard/Record',
+    icon: getIcon('eva:people-fill'),
+
   },
   {
     title: 'product',
