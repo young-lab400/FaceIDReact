@@ -40,9 +40,9 @@ const TABLE_HEAD = [
   { id: 'id', label: '序號', alignRight: false },
   { id: 'no', label: '工號', alignRight: false },
   { id: 'name', label: '姓名', alignRight: false },
-  // { id: 'isVerified', label: 'Verified', alignRight: false },
-  // { id: 'status', label: 'Status', alignRight: false },
-  { id: '' },
+  { id: 'time', label: '刷卡時間', alignRight: false },
+  { id: 'tempcen', label: '量測體溫', alignRight: false },
+  
 ];
 
 // ----------------------------------------------------------------------
@@ -80,22 +80,23 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function User() {
+export default function Record() {
 
   // const ParentContext = useContext(MacContext);
   // console.log(ParentContext.data.Serial);
   const [lists, setLists] = useState([])
-  try{
-  useEffect(() => {
-    fetch(`/webapi/api/member`)
-    .then(res => res.json())
-    .then(json => setLists(json))
-  }, [])
+ 
+ //  try{
+  // useEffect(() => {
+   //  fetch(`/webapi/api/DBTERMINAL`)
+  //   .then(res => res.json())
+ //    .then(json => setLists(json))
+  // }, [])
   // console.log(lists);
-  }
-  catch (err) {
-    console.error(err);
-  }
+  // }
+  // catch (err) {
+  //   console.error(err);
+  // }
 
 
   const [page, setPage] = useState(0);
@@ -109,6 +110,11 @@ export default function User() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [filteredUsers,setfilteredUsers ] = useState([]);
+
+ 
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -152,15 +158,33 @@ export default function User() {
   const handleFilterByName = (event) => {
     setFilterName(event.target.value);
   };
-
-  // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
-
-  // const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
-
   
+  const SearchClick = (event, newPage) => {
+
+    try{
+      const url = '/webapi/api/DBTERMINAL/No';
+      
+        fetch(url, {
+          method: "POST",
+          body: JSON.stringify({ id: filterName}),
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+          .then(res => res.json())
+          .then(json => setLists(json))
+
+      }
+      catch (err) {
+        console.error(err);
+      }
+     setfilteredUsers(applySortFilter(lists, getComparator(order, orderBy), filterName));
+  };
+
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - lists.length) : 0;
 
-  const filteredUsers = applySortFilter(lists, getComparator(order, orderBy), filterName);
+  // const filteredUsers = applySortFilter(lists, getComparator(order, orderBy), filterName);
 
   const isUserNotFound = filteredUsers.length === 0;
 
@@ -180,7 +204,9 @@ export default function User() {
 
         <Card>
           <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
-
+          <Button fullWidth size="large" type="submit" variant="contained" onClick={SearchClick}>
+            Search
+          </Button>
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
@@ -197,7 +223,7 @@ export default function User() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     // const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                    const { id, no, name,active } = row;
+                    const { id, no, name,time,tempcen } = row;
                     
                     const isItemSelected = selected.indexOf(name) !== -1;
 
@@ -214,11 +240,12 @@ export default function User() {
                         <TableCell padding="checkbox">
                           <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, name)} />
                         </TableCell>
-                        
                         <TableCell align="left">{id}</TableCell>
+                        
                         <TableCell align="left">{no}</TableCell>
                         <TableCell align="left">{name}</TableCell>
-                        
+                        <TableCell align="left">{time}</TableCell>
+                        <TableCell align="left">{tempcen}</TableCell>
                         <TableCell align="right">
                       
                           <UserMoreMenu data={row}/>
