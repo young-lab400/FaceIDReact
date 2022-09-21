@@ -25,7 +25,7 @@ import Page from '../components/Page';
 import Scrollbar from '../components/Scrollbar';
 import Iconify from '../components/Iconify';
 import SearchNotFound from '../components/SearchNotFound';
-import { UserListHead, UserListToolbar, UserMoreMenu } from '../sections/@dashboard/user';
+import { UserListHead, UserListToolbarCustom, UserMoreMenu } from '../sections/@dashboard/user';
 // import UserEdit from './UserEdit';
 // import MacContext from '../layouts/dashboard/createContext';
 // 人員選擇暫存
@@ -82,21 +82,20 @@ function applySortFilter(array, comparator, query) {
 
 export default function Record() {
 
-  // const ParentContext = useContext(MacContext);
-  // console.log(ParentContext.data.Serial);
   const [lists, setLists] = useState([])
  
- //  try{
-  // useEffect(() => {
-   //  fetch(`/webapi/api/DBTERMINAL`)
-  //   .then(res => res.json())
- //    .then(json => setLists(json))
-  // }, [])
-  // console.log(lists);
-  // }
-  // catch (err) {
-  //   console.error(err);
-  // }
+   try{
+  useEffect(() => {
+   fetch(`/webapi/api/DBTERMINAL`)
+    .then(res => res.json())
+     .then(json => {setLists(json);
+      setfilteredUsers(applySortFilter(json, getComparator(order, orderBy), filterName));})
+   }, [])
+   // console.log(lists);
+   }
+   catch (err) {
+     console.error(err);
+   }
 
 
   const [page, setPage] = useState(0);
@@ -159,7 +158,7 @@ export default function Record() {
     setFilterName(event.target.value);
   };
   
-  const SearchClick = (event, newPage) => {
+  const SearchClick = () => {
 
     try{
       const url = '/webapi/api/DBTERMINAL/No';
@@ -172,20 +171,21 @@ export default function Record() {
           }
         })
           .then(res => res.json())
-          .then(json => setLists(json))
-
+          .then(json => {setLists(json);
+          setfilteredUsers(applySortFilter(json, getComparator(order, orderBy), filterName));}
+          )
       }
       catch (err) {
         console.error(err);
       }
-     setfilteredUsers(applySortFilter(lists, getComparator(order, orderBy), filterName));
+      
+     
   };
 
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - lists.length) : 0;
 
   // const filteredUsers = applySortFilter(lists, getComparator(order, orderBy), filterName);
-
   const isUserNotFound = filteredUsers.length === 0;
 
   // const [User,updateId] = useState({No:"SP3060",Name:"廖健智",Active:true});
@@ -195,16 +195,15 @@ export default function Record() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            使用者
+            刷卡紀錄
           </Typography>
-          <Button variant="contained" component={RouterLink} to="../UserRegister"  startIcon={<Iconify icon="eva:plus-fill" />}>
-            建立新使用者
-          </Button>
+          
         </Stack>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
-          <Button fullWidth size="large" type="submit" variant="contained" onClick={SearchClick}>
+          <UserListToolbarCustom txtplaceholder='工號搜尋' numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          
+          <Button fullWidth size="large" type='submit' variant="contained" onClick={SearchClick}>
             Search
           </Button>
           <Scrollbar>
