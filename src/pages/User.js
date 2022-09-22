@@ -25,7 +25,7 @@ import Page from '../components/Page';
 import Scrollbar from '../components/Scrollbar';
 import Iconify from '../components/Iconify';
 import SearchNotFound from '../components/SearchNotFound';
-import { UserListHead, UserListToolbar, UserMoreMenu } from '../sections/@dashboard/user';
+import { UserListHead, UserListToolbarCustom, UserMoreMenu } from '../sections/@dashboard/user';
 // import UserEdit from './UserEdit';
 // import MacContext from '../layouts/dashboard/createContext';
 // 人員選擇暫存
@@ -179,7 +179,7 @@ export default function User() {
         </Stack>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <UserListToolbarCustom txtplaceholder="使用者搜尋" numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>

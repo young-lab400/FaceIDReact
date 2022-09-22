@@ -42,6 +42,7 @@ DashboardNavbar.propTypes = {
 
 export default function DashboardNavbar({ onOpenSidebar }) {
 // <Searchbar />
+// <NotificationsPopover />
   return (
 
     <RootStyle>
@@ -57,7 +58,7 @@ export default function DashboardNavbar({ onOpenSidebar }) {
         <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
         
           <LanguagePopover />
-          <NotificationsPopover />
+          
           <AccountPopover />
         </Stack>
       </ToolbarStyle>
