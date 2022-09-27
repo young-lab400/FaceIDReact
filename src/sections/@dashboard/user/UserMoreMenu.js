@@ -15,7 +15,12 @@ export default function UserMoreMenu(para) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 // console.log(para);
-  
+/* <MenuItem sx={{ color: 'text.secondary' }} >
+<ListItemIcon>
+  <Iconify icon="eva:trash-2-outline" width={24} height={24} />
+</ListItemIcon>
+<ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
+</MenuItem> */
   return (
     <>
       <IconButton ref={ref} onClick={() => setIsOpen(true)}>
@@ -32,18 +37,13 @@ export default function UserMoreMenu(para) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }} >
-          <ListItemIcon>
-            <Iconify icon="eva:trash-2-outline" width={24} height={24} />
-          </ListItemIcon>
-          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
+        
 
         <MenuItem component={RouterLink}  to={`/dashboard/UserEdit/id=${para.data.no}&no=${para.data.name}&active=${para.data.active}`} sx={{ color: 'text.secondary' }} >
           <ListItemIcon>
             <Iconify icon="eva:edit-fill" width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary="編輯" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
       </Menu>
     </>

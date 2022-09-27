@@ -92,6 +92,8 @@ export default function Register() {
   let no = '';
   let name = '';
   let active = false;
+  let front = false;
+  let after = false;
 
 
   // console.log(paras);
@@ -114,9 +116,12 @@ export default function Register() {
         }
       })
         .then(res => res.json())
-        .then(json => setLists(json))
-         // console.log(lists.active);     
-         // console.log(lists.Active);     
+        .then(json => {setLists(json);
+          active = json.active;
+          front = json.active;
+          after = json.active;
+        })
+         
     }, [])
     
     // console.log(lists);
@@ -137,8 +142,8 @@ export default function Register() {
     No: no,
     Name: name,
     Active: active,
-    Device1: false,
-    Device2: false
+    Device1: front,
+    Device2: after
   };
   // console.log(lists);
   // console.log(defaultValues);
@@ -169,12 +174,9 @@ export default function Register() {
       horizontal: 'right'
     });
   };
-
+  
 
   const onSubmit = async (data) => {
-
-
-
     // 修改人員
     const S = ParentContext.data.Serial;
     const url = `/webapi/api/member/Up?No=${S}`;
@@ -266,9 +268,9 @@ export default function Register() {
               <RHFTextField name="Name" label="姓名" />
             </Stack>
             <input type="file" name="file" onChange={changeHandler} />
-            <RHFCheckbox name="Active" label="啟用" checked={active}/>          
-            <RHFCheckbox name="Device1" label="前門" />
-            <RHFCheckbox name="Device2" label="後門" />
+            <RHFCheckbox name="Active" label="帳號是否啟用" value={active} />          
+            <RHFCheckbox name="Device1" label="前門"  value={front}/>
+            <RHFCheckbox name="Device2" label="後門" value={after} />
             <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting} >
               修改
             </LoadingButton>
