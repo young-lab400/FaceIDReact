@@ -245,11 +245,7 @@ export default function Record() {
                         <TableCell align="left">{name}</TableCell>
                         <TableCell align="left">{time}</TableCell>
                         <TableCell align="left">{tempcen}</TableCell>
-                        <TableCell align="right">
-                      
-                          <UserMoreMenu data={row}/>
                         
-                        </TableCell>
                       </TableRow>
                       
                     );

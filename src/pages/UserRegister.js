@@ -125,8 +125,9 @@ export default function Register() {
     console.log(data.Device2);
 
     // 新建人員
-    const S = ParentContext.data.Serial;
-    const url = `/webapi/api/member/Cr?No=${S}`;
+    // const S = ParentContext.data.Serial;
+    // const url = `/webapi/api/member/Cr?No=${S}`;
+    const url = `/webapi/api/member/Cr`;
     fetch(url, {
       method: "POST",
       body: JSON.stringify({ No: data.No, Name: data.Name }),
@@ -161,7 +162,7 @@ export default function Register() {
         console.log(baseURL);
         // 上傳照片
         // const S = ParentContext.data.Serial;
-        const url2 = `/webapi/api/member/PicUp?DeviceNo=${S}`;
+        const url2 = `/webapi/api/member/PicUp`;
         fetch(url2, {
           method: "POST",
           body: JSON.stringify({ No: data.No, PicNo: 1, strbase64: baseURL }),
@@ -179,7 +180,32 @@ export default function Register() {
           })
 
       }
+
     }
+
+    // 機器同步
+    const url3 = `/webapi/api/member/SyncCr`;
+    fetch(url3, {
+      method: "POST",
+      body: JSON.stringify({ No: data.No,Name: data.Name, Active:data.Active,device1:data.Device1,device2:data.Device2}),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+      .then((data) => {
+        if (data.ok) {
+          console.log("機器同步成功");
+          setMsg("機器同步成功");
+          // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
+        }
+      })
+      .catch((error) => {
+        console.log(`Error: ${error}`);
+        setMsg("機器同步失敗");
+        // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
+      })
+
+
     setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
     // navigate('/dashboard/user', { replace: true });
   };

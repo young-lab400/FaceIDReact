@@ -5,7 +5,7 @@ import { Card, Box, Stack, Checkbox } from '@mui/material';
 // @mui
 import { LoadingButton } from '@mui/lab';
 import * as Yup from 'yup';
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect,useRef  } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Snackbar from '@mui/material/Snackbar';
@@ -94,16 +94,17 @@ export default function Register() {
   let active = false;
   let front = false;
   let after = false;
-
-
+  
   // console.log(paras);
   if (paras !== undefined) {
     const st = paras.split('&');
     no = st[0].split('=')[1];
     name = st[1].split('=')[1];
     active = st[2].split('=')[1]==="true";
+    front = st[3].split('=')[1]==="245DFC6BDEF6";
+    after = st[4].split('=')[1]==="245DFC6BDEF7";
   }
-  // console.log(active);
+ 
   const [lists, setLists] = useState([])
   try {
     const url = '/webapi/api/member/getNo';
@@ -117,15 +118,11 @@ export default function Register() {
       })
         .then(res => res.json())
         .then(json => {setLists(json);
-          active = json.active;
-          front = json.active;
-          after = json.active;
+           
         })
          
     }, [])
     
-    // console.log(lists);
-    //  console.log(active);
   }
   catch (err) {
     console.error(err);
@@ -178,11 +175,13 @@ export default function Register() {
 
   const onSubmit = async (data) => {
     // 修改人員
-    const S = ParentContext.data.Serial;
-    const url = `/webapi/api/member/Up?No=${S}`;
+    console.log(data);
+    // const S = ParentContext.data.Serial;
+    // const url = `/webapi/api/member/Up?No=${S}`;
+    const url = `/webapi/api/member/Up`;
     fetch(url, {
       method: "POST",
-      body: JSON.stringify({ No: data.No,Name: data.Name, Active:data.Active }),
+      body: JSON.stringify({ No: data.No,Name: data.Name, Active:data.Active,device1:data.Device1,device2:data.Device2}),
       headers: {
         'Content-Type': 'application/json',
       }
@@ -218,7 +217,8 @@ export default function Register() {
         // console.log(baseURL);
         // 上傳照片
         // const S = ParentContext.data.Serial;
-        const url2 = `/webapi/api/member/PicUp?DeviceNo=${S}`;
+        // const url2 = `/webapi/api/member/PicUp?DeviceNo=${S}`;
+        const url2 = `/webapi/api/member/PicUp`;
         fetch(url2, {
           method: "POST",
           body: JSON.stringify({ No: data.No, PicNo: 1, strbase64: baseURL }),
@@ -242,6 +242,28 @@ export default function Register() {
       }
 
     }
+    // 機器同步
+    const url3 = `/webapi/api/member/Sync`;
+    fetch(url3, {
+      method: "POST",
+      body: JSON.stringify({ No: data.No,Name: data.Name, Active:data.Active,device1:data.Device1,device2:data.Device2}),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+      .then((data) => {
+        if (data.ok) {
+          console.log("機器同步成功");
+          setMsg("機器同步成功");
+          // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
+        }
+      })
+      .catch((error) => {
+        console.log(`Error: ${error}`);
+        setMsg("機器同步失敗");
+        // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
+      })
+
     setMOpen({ open: true, vertical: 'bottom', horizontal: 'right' });
     // navigate('/dashboard/User', { replace: true });
   };

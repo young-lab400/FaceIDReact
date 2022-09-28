@@ -39,7 +39,7 @@ export default function UserMoreMenu(para) {
       >
         
 
-        <MenuItem component={RouterLink}  to={`/dashboard/UserEdit/id=${para.data.no}&no=${para.data.name}&active=${para.data.active}`} sx={{ color: 'text.secondary' }} >
+        <MenuItem component={RouterLink}  to={`/dashboard/UserEdit/id=${para.data.no}&no=${para.data.name}&active=${para.data.active}&device1=${para.data.device[0]}&device2=${para.data.device[1]}`} sx={{ color: 'text.secondary' }} >
           <ListItemIcon>
             <Iconify icon="eva:edit-fill" width={24} height={24} />
           </ListItemIcon>
