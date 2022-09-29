@@ -244,6 +244,7 @@ export default function Register() {
     }
     // 機器同步
     const url3 = `/webapi/api/member/Sync`;
+    console.log(data.Active);
     fetch(url3, {
       method: "POST",
       body: JSON.stringify({ No: data.No,Name: data.Name, Active:data.Active,device1:data.Device1,device2:data.Device2}),

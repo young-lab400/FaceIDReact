@@ -115,98 +115,129 @@ export default function Register() {
     // setIsFilePicked(true);
   };
   const handleClose = () => {
-    setMOpen({open: false,vertical: 'bottom',
-    horizontal: 'right'});
- };
+    setMOpen({
+      open: false, vertical: 'bottom',
+      horizontal: 'right'
+    });
+  };
+  
+  function MemberCrAndPicCr(data) {
+    const memberCr = new Promise((resolve, reject) => {
+
+      // 新建人員
+     
+     // const url = `/webapi/api/member/Cr?No=${S}`;
+     const url = `/webapi/api/member/Cr`;
+     console.log(data);
+     fetch(url, {
+       method: "POST",
+       body: JSON.stringify({ No: data.No, Name: data.Name, device1: data.Device1, device2: data.Device2 }),
+       headers: {
+         'Content-Type': 'application/json',
+       }
+     })
+       .then(res => {
+         if (res.OK)
+           res.json();
+         else {
+           throw new Error("404 response", { cause: res });
+         }
+       })
+       .then(json => {
+         if (json.success === "true")
+           setMsg("人員新增成功");
+         else
+           setMsg("人員新增失敗");
+           resolve("操作成功");
+       })
+       .catch((error) => {
+         reject(new Error("something bad happened"));
+         // console.log(`Error: ${error}`);
+       })
+      
+   });
+ 
+
+ const PicCr = new Promise((resolve, reject) => {
+   // 照片  Tobase64
+   // const formData = new FormData();
+   // formData.append('File', selectedFile);
+   let baseURL = "";
+   if (selectedFile !== undefined) {
+     // Make new FileReader
+     const reader = new FileReader();
+     // Convert the file to base64 text
+     reader.readAsDataURL(selectedFile);
+     // on reader load somthing...
+     reader.onload = () => {
+       // Make a fileInfo Object
+       // console.log("Called", reader);
+       baseURL = reader.result.split(',')[1];
+       // console.log(baseURL);
+       // 上傳照片
+       // const S = ParentContext.data.Serial;
+       const url2 = `/webapi/api/member/PicUp`;
+       fetch(url2, {
+         method: "POST",
+         body: JSON.stringify({ No: data.No, PicNo: 1, strbase64: baseURL, device1: data.Device1, device2: data.Device2 }),
+         headers: {
+           'Content-Type': 'application/json',
+         }
+       })
+         .then(res => {
+           if (res.OK)
+             res.json();
+           else {
+             throw new Error("404 response", { cause: res });
+           }
+         })
+         .then(json => {
+           if (json.success === "true")
+             setMsg("照片新增成功");
+           else
+             setMsg("照片新增失敗");
+             resolve("操作成功");
+         })
+         .catch((error) => {
+           reject(new Error("something bad happened"));
+           // console.log(`Error: ${error}`);
+         })
+     }
+   }
+ });
+ 
+    return Promise.all([memberCr, PicCr])
+  }
+
+
   const onSubmit = async (data) => {
-    console.log(data.No);
-    console.log(data.Name);
-    console.log(data.Device1);
-    console.log(data.Device2);
-
-    // 新建人員
-    // const S = ParentContext.data.Serial;
-    // const url = `/webapi/api/member/Cr?No=${S}`;
-    const url = `/webapi/api/member/Cr`;
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify({ No: data.No, Name: data.Name }),
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
-      .then((data) => {
-        if (data.ok) {
-          console.log("會員新增成功");
-        }
-      })
-      .catch((error) => {
-        console.log(`Error: ${error}`);
-      })
-    // 照片  Tobase64
-    // const formData = new FormData();
-    // formData.append('File', selectedFile);
-    let baseURL = "";
-    if (selectedFile !== undefined) {
-      // Make new FileReader
-      const reader = new FileReader();
-
-      // Convert the file to base64 text
-      reader.readAsDataURL(selectedFile);
-
-      // on reader load somthing...
-      reader.onload = () => {
-        // Make a fileInfo Object
-        console.log("Called", reader);
-        baseURL = reader.result.split(',')[1];
-        console.log(baseURL);
-        // 上傳照片
-        // const S = ParentContext.data.Serial;
-        const url2 = `/webapi/api/member/PicUp`;
-        fetch(url2, {
-          method: "POST",
-          body: JSON.stringify({ No: data.No, PicNo: 1, strbase64: baseURL }),
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        })
-          .then((data) => {
-            if (data.ok) {
-              console.log("照片上傳成功");
+    MemberCrAndPicCr(data)
+      .then(
+        () => {
+          // 機器同步
+          const url3 = `/webapi/api/member/SyncCr`;
+          fetch(url3, {
+            method: "POST",
+            body: JSON.stringify({ No: data.No, Name: data.Name, Active: data.Active, device1: data.Device1, device2: data.Device2 }),
+            headers: {
+              'Content-Type': 'application/json',
             }
           })
-          .catch((error) => {
-            console.log(`Error: ${error}`);
-          })
-
-      }
-
-    }
-
-    // 機器同步
-    const url3 = `/webapi/api/member/SyncCr`;
-    fetch(url3, {
-      method: "POST",
-      body: JSON.stringify({ No: data.No,Name: data.Name, Active:data.Active,device1:data.Device1,device2:data.Device2}),
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
-      .then((data) => {
-        if (data.ok) {
-          console.log("機器同步成功");
-          setMsg("機器同步成功");
-          // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
+            .then((data) => {
+              if (data.ok) {
+                console.log("機器同步成功");
+                setMsg("機器同步成功");
+                // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
+              }
+            })
+            .catch((error) => {
+              console.log(`Error: ${error}`);
+              setMsg("機器同步失敗");
+              // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
+            })
         }
-      })
-      .catch((error) => {
-        console.log(`Error: ${error}`);
-        setMsg("機器同步失敗");
-        // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
-      })
-
-
-    setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
+      )
+    setMOpen({ open: true, vertical: 'bottom', horizontal: 'right' });
     // navigate('/dashboard/user', { replace: true });
   };
 
@@ -232,15 +263,15 @@ export default function Register() {
 
           </Stack>
         </FormProvider>
-  
+
         <Snackbar
-        anchorOrigin={{ vertical, horizontal }}
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        message={MesageText}
-        key={vertical + horizontal}
-      />
+          anchorOrigin={{ vertical, horizontal }}
+          open={open}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={MesageText}
+          key={vertical + horizontal}
+        />
 
       </RootStyle>
     </Page>
