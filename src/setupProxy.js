@@ -1,6 +1,6 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const API_SERVICE_URL = "https://api.k0000.net:442";
+const API_SERVICE_URL = "http://localhost:8080";
 module.exports = function(app) {
   app.use(
     '/webapi',

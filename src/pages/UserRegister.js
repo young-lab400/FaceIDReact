@@ -93,7 +93,8 @@ export default function Register() {
   const defaultValues = {
     No: '',
     Name: '',
-    Device1: false,
+    Active: true,
+    Device1: true,
     Device2: false
   };
 
@@ -121,11 +122,9 @@ export default function Register() {
     });
   };
 
-  function MemberCrAndPicCr(data) {
-    const memberCr = new Promise((resolve, reject) => {
-
+  async function MemberCrAndPicCr(data) {
+    const memberCr = () => {
       // 新建人員
-
       // const url = `/webapi/api/member/Cr?No=${S}`;
       const url = `/webapi/api/member/Cr`;
       console.log(data);
@@ -138,27 +137,19 @@ export default function Register() {
       })
         .then(res => {
           if (res.OK)
-            res.json();
-          else {
-            throw new Error("404 response", { cause: res });
-          }
+            res.json().then(json => {
+              if (json.success === "true")
+                setMsg("人員新增成功");
+              else
+                setMsg("人員新增失敗");
+            })
         })
-        .then(json => {
-          if (json.success === "true")
-            setMsg("人員新增成功");
-          else
-            setMsg("人員新增失敗");
-          resolve("操作成功");
-        })
-        .catch((error) => {
-          reject(new Error("something bad happened"));
+          .catch((error) => {
+          // reject(new Error("something bad happened"));
           // console.log(`Error: ${error}`);
         })
-
-    });
-
-
-    const PicCr = new Promise((resolve, reject) => {
+    };
+    const PicCr = () => {
       // 照片  Tobase64
       // const formData = new FormData();
       // formData.append('File', selectedFile);
@@ -186,27 +177,26 @@ export default function Register() {
           })
             .then(res => {
               if (res.OK)
-                res.json();
-              else {
-                throw new Error("404 response", { cause: res });
-              }
-            })
-            .then(json => {
-              if (json.success === "true")
-                setMsg("照片新增成功");
-              else
-                setMsg("照片新增失敗");
-              resolve("操作成功");
+                res.json().then(json => {
+                  if (json.success === "true")
+                    setMsg("照片新增成功");
+                  else
+                    setMsg("照片新增失敗");
+                  // resolve("操作成功");
+                })
             })
             .catch((error) => {
-              reject(new Error("something bad happened"));
+              setMsg("照片上傳失敗");
+              // reject(new Error("something bad happened"));
               // console.log(`Error: ${error}`);
             })
         }
       }
-    });
+    };
 
-    return Promise.all([memberCr, PicCr])
+    // return Promise.all([memberCr, PicCr])
+    await memberCr();
+    await PicCr();
   }
 
 
@@ -255,6 +245,7 @@ export default function Register() {
               <RHFTextField name="Name" label="姓名" />
             </Stack>
             <input type="file" name="file" onChange={changeHandler} />
+            <RHFCheckbox name="Active" label="帳號是否啟用"/>
             <RHFCheckbox name="Device1" label="前門" />
             <RHFCheckbox name="Device2" label="後門" />
             <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting} >

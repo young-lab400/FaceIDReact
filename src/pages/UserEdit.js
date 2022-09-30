@@ -20,6 +20,7 @@ import Logo from '../components/Logo';
 // components
 import { FormProvider, RHFTextField, RHFCheckbox } from '../components/hook-form';
 import MacContext from '../layouts/dashboard/createContext';
+// import { reject } from 'lodash';
 
 
 
@@ -172,8 +173,8 @@ export default function Register() {
       horizontal: 'right'
     });
   };
-  function MemberUpAndPicUp(data) {
-    const memberUp = new Promise((resolve, reject) => {
+  async function MemberUpAndPicUp(data) {
+    const memberUp = () => {
 
       // 修改人員
       console.log(data);
@@ -189,25 +190,24 @@ export default function Register() {
       })
         .then(res => {
           if (res.OK)
-            res.json();
-          else {
-            throw new Error("404 response", { cause: res });
-          }
+            res.json().then(json => {
+              if (json.success === "true")
+                setMsg("人員新增成功");
+              else
+                setMsg("人員新增失敗");
+              // resolve(new Error("操作成功"));
+            })
+
         })
-        .then(json => {
-          if (json.success === "true")
-            setMsg("人員新增成功");
-          else
-            setMsg("人員新增失敗");
-          resolve("操作成功");
-        })
+
         .catch((error) => {
+          console.log(error);
           setMsg("人員修改失敗");
-          reject(new Error("something bad happened"));
+          // reject(new Error("something bad happened"));
           // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
         })
-    });
-    const PicUp = new Promise((resolve, reject) => {
+    };
+    const PicUp = () => {
       // 照片  Tobase64
       // const formData = new FormData();
       // formData.append('File', selectedFile);
@@ -238,61 +238,66 @@ export default function Register() {
           })
             .then(res => {
               if (res.OK)
-                res.json();
-              else {
-                throw new Error("404 response", { cause: res });
-              }
+                res.json().then(json => {
+                  if (json.success === "true")
+                    setMsg("照片上傳成功");
+                  else
+                    setMsg("照片上傳失敗");
+                  // resolve("操作成功");
+                })
+
             })
-            .then(json => {
-              if (json.success === "true")
-                setMsg("照片上傳成功");
-              else
-                setMsg("照片上傳失敗");
-              resolve("操作成功");
-            })
+
             .catch((error) => {
+              // console.log(error);
               setMsg("照片上傳失敗");
-              reject(new Error("something bad happened"));
+              // reject(new Error("something bad happened"));
               // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
             })
         }
+        
       }
-    });
-    return Promise.all([memberUp, PicUp])
-  }
+      // resolve("操作成功");
+    };
 
-  const onSubmit = async (data) => {
-    MemberCrAndPicCr(data)
-      .then(
-        () => {
-          // 機器同步
-          const url3 = `/webapi/api/member/Sync`;
-          console.log(data.Active);
-          fetch(url3, {
-            method: "POST",
-            body: JSON.stringify({ No: data.No, Name: data.Name, Active: data.Active, device1: data.Device1, device2: data.Device2 }),
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          })
-            .then((data) => {
-              if (data.ok) {
-                console.log("機器同步成功");
-                setMsg("機器同步成功");
-                // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
-              }
-            })
-            .catch((error) => {
-              console.log(`Error: ${error}`);
-              setMsg("機器同步失敗");
-              // setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
-            })
-        })
+    await memberUp();
+    await PicUp();
+  // 機器同步
+  const url3 = `/webapi/api/member/Sync`;
+  // console.log(data.Active);
+  fetch(url3, {
+    method: "POST",
+    body: JSON.stringify({ No: no, Name: name, Active: active, device1: front, device2: after }),
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+    .then((data) => {
+      if (data.ok) {
+        console.log("機器同步成功");
+        setMsg("機器同步成功");
+         setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
+      }
+    })
+    .catch((error) => {
+      console.log(`Error: ${error}`);
+      setMsg("機器同步失敗");
+       setMOpen({open: true,vertical: 'bottom', horizontal: 'right'});
+    })
+    // Promise.all([memberUp(data), PicUp(data)])
+  };
 
+  const onSubmit = (data) => {
+    MemberUpAndPicUp(data).then(
+      (result) => {
+      
+      })
     setMOpen({ open: true, vertical: 'bottom', horizontal: 'right' });
     // navigate('/dashboard/User', { replace: true });
   };
-
+  const sync = () => {
+   
+  };
   // const isItemSelected = lists.active;
   // <input
   //             type="checkbox"
@@ -311,7 +316,7 @@ export default function Register() {
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={3}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <RHFTextField name="No" label="工號" disabled="true" />
+              <RHFTextField name="No" label="工號" disabled />
               <RHFTextField name="Name" label="姓名" />
             </Stack>
             <input type="file" name="file" onChange={changeHandler} />
@@ -321,6 +326,8 @@ export default function Register() {
             <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting} >
               修改
             </LoadingButton>
+            
+            <input type="button" value="同步" onClick={sync} />
             <Stack spacing={0.75}>
               <Box component="img" alt="照片" src={`data:image/jpeg;base64,${lists.pic1}`} sx={{ width: 280, mr: 2 }} />
             </Stack>
